@@ -1,0 +1,9 @@
+    h5 {
+      height:30px;
+      overflow: hidden;
+    }
+
+    a:focus {
+    	outline: none;
+    	hlbr:expression(this.onFocus=this.blur());
+    }
