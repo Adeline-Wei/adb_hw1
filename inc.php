@@ -1,7 +1,7 @@
 <?php
 $dbhost = '127.0.0.1';
 $dbuser = 'root';
-$dbpass = '';
+$dbpass = '1234';
 $dbname = 'adbhw1';
 
 /* === Database Connection === */
@@ -36,4 +36,17 @@ function getAppByCountry($country){
 	}
 	$result->close();
 	return $data;
+}
+
+function updateAppAverageRate($star, $country, $pid){
+	global $db;
+	$result = $db->query("SELECT average, times FROM app where app.country = '".$country."' and app.pid = '".$pid."'");
+	$row = $result->fetch_assoc();
+	$newTimes = $row['times'] + 1;
+	$newAverage = ($row['average'] * $row['times'] + $star) / $newTimes;
+	$newAverage = number_format($newAverage, 1, '.', '');
+	if(!$db->query("UPDATE app SET average = ".(float)$newAverage.", times = ".$newTimes." WHERE app.country = '".$country."' AND app.pid = '".$pid."'"))
+			echo "Errormessage: ".$db->error."\n";
+	$result->close();
+	return $newAverage;
 }
