@@ -1,7 +1,7 @@
 <?php
 $dbhost = '127.0.0.1';
 $dbuser = 'root';
-$dbpass = '1234';
+$dbpass = '';
 $dbname = 'adbhw1';
 
 /* === Database Connection === */
@@ -49,4 +49,13 @@ function updateAppAverageRate($star, $country, $pid){
 			echo "Errormessage: ".$db->error."\n";
 	$result->close();
 	return $newAverage;
+}
+
+function getCustomAreas(){
+	global $db;
+	$result = $db->query("SELECT AsText(g) AS geom FROM custom");
+	while($row = $result->fetch_assoc()){
+		$data[$i++] = $row;
+	}
+	return $data;
 }
