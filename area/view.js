@@ -141,13 +141,6 @@ var app = (function () {
                 }
             });
 
-            marker = new google.maps.Marker({
-              position: gmap.getCenter(),
-              map: gmap,
-              title: 'I\'m Here!',
-              draggable: true
-            });
-
             google.maps.event.addListener(gmap, 'tilesloaded', function () {
                 if (!this.loaded) {
                     this.loaded = true;
