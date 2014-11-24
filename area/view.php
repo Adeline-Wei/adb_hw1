@@ -1,3 +1,6 @@
+<?php
+require_once('../inc.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,28 +20,18 @@
       src="http://maps.google.com/maps/api/js?sensor=false&libraries=drawing"></script>
     <script type="text/javascript" src="wicket.js"></script>
     <script type="text/javascript" src="wicket-gmap3.js"></script>
-    <script type="text/javascript" src="editor.js"></script>
+    <script type="text/javascript" src="view.js"></script>
   </head>
 
   <body onload="app.gmap=app.init();">
     <div class="container" style="margin-top:20px;">
       <div class="row row-offcanvas row-offcanvas-right">
 
-        <div class="col-xs-12 col-sm-6">
-          <div id="canvas" style="width:560px;height:500px;"></div>
+        <div class="col-xs-12 col-sm-12">
+          <h3>Customized Area Overview <a class="btn btn-xs btn-primary" href="edit-wkt.html">Create</a> <a class="btn btn-xs btn-info" href="../index.html">Back</a></h3>
+          <div id="canvas" style="width:100%;height:450px;"></div>
+          <textarea style="display:none;" id="wkt"><?php echo getAllCustomAreaWKT(); ?></textarea>
         </div><!--/.col-xs-12.col-sm-9-->
-
-        <div class="col-xs-6 col-sm-6" id="applist">
-          <h3>Customized Area in Well-Known Text (WKT)</h3>
-          <textarea name="wktstr" class="form-control" rows="6" id="wkt" readonly="true" style="margin-bottom:10px;" placeholder="WKT Format..."></textarea>
-
-          <div class="alert alert-info">When you create an area sucessfully, we will also pick some apps into this area randomly.</div>
-          <hr/>
-          <center>
-          	<button class="btn btn-danger" id="delete-button" onClick="app.clearMap();app.clearText();">Reset Area</button>
-          	<input type="submit" class="btn btn-primary " id="submitbutton" value="Create" />
-          </center>
-        </div><!--/.sidebar-offcanvas-->
 
       </div>
 
@@ -56,6 +49,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+
    			$("#submitbutton").click( function(){
    				console.log($('#wkt').serialize());
    				$.ajax({
@@ -64,7 +58,8 @@
                 	type:"POST",
                 	dataType:'text',
                 	success: function(msg){
-                    	window.location = "view.php";
+                    	alert(msg);
+                    	window.location = "../index.html";
                 	}
    				});
 

@@ -18,7 +18,7 @@ $db->query("SET NAMES 'utf8'");
 
 function getCountryByPos($pos){
 	global $db;
-	$result = $db->query("SELECT cid, ISO3, Name FROM country WHERE ST_CONTAINS (g, geomfromtext('POINT(".$pos.")'))");
+	$result = $db->query("SELECT cid, ISO3, name FROM country WHERE ST_CONTAINS (g, geomfromtext('POINT(".$pos.")'))");
 	if($result->num_rows==0)
 		$data = NULL;
 	else
@@ -30,6 +30,17 @@ function getCountryByPos($pos){
 function getAppByCountry($country){
 	global $db;
 	$result = $db->query("SELECT * FROM app WHERE country = '".$country."'");
+	$i=0;
+	while($row = $result->fetch_assoc()){
+		$data[$i++] = $row;
+	}
+	$result->close();
+	return $data;
+}
+
+function getAppByCustomArea($cid){
+	global $db;
+	$result = $db->query("SELECT * FROM app WHERE country = 'C".$cid."'");
 	$i=0;
 	while($row = $result->fetch_assoc()){
 		$data[$i++] = $row;
@@ -57,5 +68,38 @@ function getCustomAreas(){
 	while($row = $result->fetch_assoc()){
 		$data[$i++] = $row;
 	}
+	$result->close();
 	return $data;
+}
+
+function getAllCustomAreaWKT(){
+	$arr = getCustomAreas();
+
+	$str = "";
+	foreach($arr as $g){
+		$str .= str_replace("POLYGON","", $g['geom']);
+	}
+
+	$str = str_replace("))",")),",$str);
+	return str_replace(",)", ")", preg_replace("/^(...*)/", "MULTIPOLYGON($0)", $str));
+}
+
+function PosWithinCustomArea($pos){
+	global $db;
+	$result = $db->query("SELECT id, name FROM custom WHERE ST_CONTAINS (g, geomfromtext('POINT(".$pos.")')) ORDER BY id DESC LIMIT 0,1");
+	$i=0;
+	if($result->num_rows==0)
+		$data = NULL;
+	else
+		$data = $result->fetch_assoc();
+	$result->close();
+	return $data;
+}
+
+function createCustomArea($wkt){
+	global $db;
+	echo $wkt;
+	if(!$db->query("INSERT INTO custom(id, name, g) VALUES (NULL, 'CXX', GeomFromText('".$wkt."'))") )
+		echo "Errormessage: ".$db->error."\n";
+	return $wkt;
 }

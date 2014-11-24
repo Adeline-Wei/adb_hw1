@@ -21,7 +21,7 @@
         map: map,
         title: 'I\'m Here!',
         draggable: true
-      })
+      });
 
       google.maps.event.addListener(marker, 'dragend', function(event) {
         console.log("Marker click:"+event.latLng);
@@ -42,7 +42,7 @@
             }
             else{
               currentCID = ret.country.ISO3;
-              $("#position").html(ret.country.Name);
+              $("#position").html(ret.country.name);
               for (i =0; i< ret.apps.length; i++) {
                 //$("#applist-content").append(ret.apps[i].name);
                 if (i % 5 == 0)

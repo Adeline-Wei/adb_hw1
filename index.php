@@ -1,3 +1,6 @@
+<?php
+require_once('inc.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,18 +19,21 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/star-rating.min.css">
 
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA2SijSHw48ozVyXnNFr-QI4alZe9RaFQE&sensor=FALSE"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA2SijSHw48ozVyXnNFr-QI4alZe9RaFQE&sensor=FALSE&libraries=drawing"></script>
+    <script type="text/javascript" src="area/wicket.js"></script>
+    <script type="text/javascript" src="area/wicket-gmap3.js"></script>
   </head>
 
-  <body>
+  <body  onload="app.gmap=app.init();">
 
     <div class="container" style="margin-top:20px;">
       <div class="row row-offcanvas row-offcanvas-right">
 
         <div class="col-xs-12 col-sm-6">
-          <div id="googleMap" style="width:550px;height:450px;"></div>
+          <div id="canvas" style="width:550px;height:450px;"></div>
+          <textarea style="display:none;" id="wkt"><?php echo getAllCustomAreaWKT(); ?></textarea>
           <div style="margin-top:30px; text-align:center;">
-            <p><a href="#" class="btn btn-info disabled" id="position">Somewhere</a> <a href="#" class="btn btn-primary">Customized Area</a></p>
+            <p><a href="#" class="btn btn-info disabled" id="position">Somewhere</a> <a href="area/view.php" class="btn btn-primary">Customized Area Overview</a></p>
           </div>
         </div><!--/.col-xs-12.col-sm-9-->
 
@@ -69,7 +75,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/new-main.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="js/star-rating.min.js"></script>
