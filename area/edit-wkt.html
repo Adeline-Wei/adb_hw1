@@ -27,31 +27,30 @@
     <script type="text/javascript">
       var app = (function () {
           return {
-              selectedShape: "",
               features: [],
               /**
                * Clears the map contents.
                */
-              clearMap: function () {
-                  var i;
-
-                  // Reset the remembered last string (so that we can clear the map,
-                  //  paste the same string, and see it again)
-                  document.getElementById('wkt').last = '';
-
-                  for (i in this.features) {
-                      if (this.features.hasOwnProperty(i)) {
-                          this.features[i].setMap(null);
-                      }
-                  }
-                  this.features.length = 0;
-              },
+	          clearMap: function () {
+	              var i;
+  
+	              // Reset the remembered last string (so that we can clear the map,
+	              //  paste the same string, and see it again)
+	              document.getElementById('wkt').last = '';
+  
+	              for (i in this.features) {
+	                  if (this.features.hasOwnProperty(i)) {
+	                      this.features[i].setMap(null);
+	                  }
+	              }
+	              this.features.length = 0;
+	          },
               /**
                * Clears the current contents of the textarea.
                */
-              clearText: function () {
-                  document.getElementById('wkt').value = '';
-              },
+        	  clearText: function () {
+        	      document.getElementById('wkt').value = '';
+        	  },
               /**
                * Maps the current contents of the textarea.
                * @return  {Object}    Some sort of geometry object
@@ -103,27 +102,17 @@
                       if (obj.setEditable) {obj.setEditable(false);}
                   }
 
-                  if (Wkt.isArray(obj)) { // Distinguish multigeometries (Arrays) from objects
-                      for (i in obj) {
-
-                          if (obj.hasOwnProperty(i) && !Wkt.isArray(obj[i])) {
-                              obj[i].setMap(this.gmap);
-                              this.features.push(obj[i]);
-                          }
-                          
-                      }
-                      for(i=0;i< obj.length; i++){
-                        obj[i].addListener('click', function (n) {
-                          app.setSelection(this);
-                          app.updateText();
-                        });
-                      }
-                  } else {
-                      obj.setMap(this.gmap); // Add it to the map
-                      this.features.push(obj);
-                  }
-
-
+	              if (Wkt.isArray(obj)) { // Distinguish multigeometries (Arrays) from objects
+	                  for (i in obj) {
+	                      if (obj.hasOwnProperty(i) && !Wkt.isArray(obj[i])) {
+	                          obj[i].setMap(this.gmap);
+	                          this.features.push(obj[i]);
+	                      }
+	                  }
+	              } else {
+	                  obj.setMap(this.gmap); // Add it to the map
+	                  this.features.push(obj);
+	              }
 
                   // Pan the map to the feature
                   if (obj.getBounds !== undefined && typeof obj.getBounds === 'function') {
@@ -150,28 +139,6 @@
                   var wkt = new Wkt.Wkt();
                   wkt.fromObject(this.features[0] );
                   document.getElementById('wkt').value = wkt.write();
-              },
-              clearSelection: function () {
-                if (this.selectedShape) {
-                  this.selectedShape.setEditable(false);
-                  this.selectedShape = null;
-                }
-              },
-              setSelection: function (shape) {
-                this.clearSelection();
-                app.selectedShape = shape;
-                shape.setEditable(true);
-              },
-              deleteSelectedShape: function () {
-                console.log("delete");
-                if (this.selectedShape) {
-                  //this.features.remove(this.features.indexOf(this.selectedShape));
-                  this.selectedShape.setMap(null);
-                  this.updateText();
-                }else{
-                  console.log(this.selectedShape);
-                  this.updateText();
-                }
               },
               /**
                * Application entry point.
@@ -202,15 +169,15 @@
                       }
                   });
 
-              google.maps.event.addListener(gmap, 'tilesloaded', function () {
-                  if (!this.loaded) {
-                      this.loaded = true;
-                      // NOTE: We start with a MULTIPOLYGON; these aren't easily deconstructed, so we won't set this object to be editable in this example
-                      //document.getElementById('wkt').value = 'MULTIPOLYGON(((134.7418212890625 35.940629014340836,134.7418212890625 35.17198417084961,133.3575439453125 35.17198417084961,133.3575439453125 35.940629014340836,134.7418212890625 35.940629014340836)), ((134.0167236328125 34.268991772335504,134.0167236328125 33.466246352134036,132.8851318359375 33.466246352134036,132.8851318359375 34.268991772335504,134.0167236328125 34.268991772335504)))';
-                      app.mapIt();
-                  }
-              });
-
+        	      google.maps.event.addListener(gmap, 'tilesloaded', function () {
+        	          if (!this.loaded) {
+        	              this.loaded = true;
+        	              // NOTE: We start with a MULTIPOLYGON; these aren't easily deconstructed, so we won't set this object to be 	  editable in this example
+        	              document.getElementById('wkt').value = 'MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 45 20, 30 5, 	  10 10, 10 30, 20 35), (30 20, 20 25, 20 15, 30 20)))';
+        	              app.mapIt();
+        	          }
+        	      });
+  
                   gmap.drawingManager = new google.maps.drawing.DrawingManager({
                       drawingControlOptions: {
                           position: google.maps.ControlPosition.TOP_CENTER,
@@ -224,55 +191,48 @@
                   });
                   gmap.drawingManager.setMap(gmap);
                   //google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', app.deleteSelectedShape);
-                  google.maps.event.addListener(gmap.drawingManager, 'overlaycomplete', function (event) {
-                      var wkt;
-
-                      app.clearText();
-                      app.clearMap();
-
-                      // Set the drawing mode to "pan" (the hand) so users can immediately edit
-                      this.setDrawingMode(null);
-
-                      // Polygon drawn
-                      if (event.type === google.maps.drawing.OverlayType.POLYGON || event.type === google.maps.drawing.OverlayType.POLYLINE) {
-                          // New vertex is inserted
-                          google.maps.event.addListener(event.overlay.getPath(), 'insert_at', function (n) {
-                              app.updateText();
-                          });
-
-                          // Existing vertex is removed (insertion is undone)
-                          google.maps.event.addListener(event.overlay.getPath(), 'remove_at', function (n) {
-                              app.updateText();
-                          });
-
-                          // Existing vertex is moved (set elsewhere)
-                          google.maps.event.addListener(event.overlay.getPath(), 'set_at', function (n) {
-                              app.updateText();
-                          });
-                      } else if (event.type === google.maps.drawing.OverlayType.RECTANGLE) { // Rectangle drawn
-                          // Listen for the 'bounds_changed' event and update the geometry
-                          google.maps.event.addListener(event.overlay, 'bounds_changed', function () {
-                              app.updateText();
-                          });
-                      }
-                      var newShape = event.overlay;
-                      newShape.type = event.type;
-                      google.maps.event.addListener(newShape, 'click', function() {
-                        app.selectedShape = newShape;
-                      });
-                      app.setSelection(newShape);
-                      console.log(newShape);
-
-                      app.features.push(event.overlay);
-                      wkt = new Wkt.Wkt();
-                      wkt.fromObject(event.overlay);
-                      document.getElementById('wkt').value = wkt.write();
-                      });
-
-                  return gmap;
-              }
-          };
-      }()); // Execute immediately
+    	          google.maps.event.addListener(gmap.drawingManager, 'overlaycomplete', function (event) {
+    	              var wkt;
+    
+  	              app.clearText();
+    	              app.clearMap();
+    
+  	              // Set the drawing mode to "pan" (the hand) so users can immediately edit
+    	              this.setDrawingMode(null);
+    
+  	              // Polygon drawn
+    	              if (event.type === google.maps.drawing.OverlayType.POLYGON || event.type === google.maps.drawing.OverlayType.    POLINE) {
+    	                  // New vertex is inserted
+    	                  google.maps.event.addListener(event.overlay.getPath(), 'insert_at', function (n) {
+    	                      app.updateText();
+    	                  });
+    
+  	                  // Existing vertex is removed (insertion is undone)
+    	                  google.maps.event.addListener(event.overlay.getPath(), 'remove_at', function (n) {
+    	                      app.updateText();
+    	                  });
+    
+  	                  // Existing vertex is moved (set elsewhere)
+    	                  google.maps.event.addListener(event.overlay.getPath(), 'set_at', function (n) {
+    	                      app.updateText();
+    	                  });
+    	              } else if (event.type === google.maps.drawing.OverlayType.RECTANGLE) { // Rectangle drawn
+    	                  // Listen for the 'bounds_changed' event and update the geometry
+    	                  google.maps.event.addListener(event.overlay, 'bounds_changed', function () {
+    	                      app.updateText();
+    	                  });
+    	              }
+    
+  	              app.features.push(event.overlay);
+    	              wkt = new Wkt.Wkt();
+    	              wkt.fromObject(event.overlay);
+    	              document.getElementById('wkt').value = wkt.write();
+    	              });
+    
+  	          return gmap;
+    	      }
+    	  };
+    	}()); // Execute immediatel
     </script>
   </head>
 
@@ -291,7 +251,7 @@
           <div class="alert alert-info">When you create an area sucessfully, we will also pick some apps into this area randomly.</div>
           <hr/>
           <center>
-          <button class="btn btn-danger" id="delete-button" onClick="app.deleteSelectedShape();">Reset Area</button>
+          <button class="btn btn-danger" id="delete-button" onClick="app.clearMap();app.clearText();">Reset Area</button>
           <button class="btn btn-primary " id="submit-button">Create</button>
           </center>
         </div><!--/.sidebar-offcanvas-->
