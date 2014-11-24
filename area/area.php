@@ -6,6 +6,5 @@ createCustomArea($_POST['wktstr']);
 
 // Radomly pick 5 apps associated with this custom area.
 
-
-echo "Success!";
+//echo "Success!";
 ?>

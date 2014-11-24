@@ -1,7 +1,7 @@
 <?php
 $dbhost = '127.0.0.1';
 $dbuser = 'root';
-$dbpass = '';
+$dbpass = '1234';
 $dbname = 'adbhw1';
 
 /* === Database Connection === */
@@ -101,5 +101,26 @@ function createCustomArea($wkt){
 	echo $wkt;
 	if(!$db->query("INSERT INTO custom(id, name, g) VALUES (NULL, 'CXX', GeomFromText('".$wkt."'))") )
 		echo "Errormessage: ".$db->error."\n";
+	createCustomApp();
 	return $wkt;
+}
+
+function createCustomApp(){
+	global $db;
+	$result = $db->query("SELECT id FROM custom ORDER BY id DESC LIMIT 0, 1");	// C1, C2, C3, ...
+	$newId = $result->fetch_assoc();
+	$result->close();
+	$result = $db->query("SELECT pid FROM app GROUP BY pid ORDER BY RAND() LIMIT 0, 5");
+	for($i=0; $i<5; $i++){
+		$random[$i] = $result->fetch_assoc();
+	}
+	var_dump($random);
+	for ($i = 0; $i < 5; $i ++){
+		$result2 = $db->query("SELECT pid, name, icon, url FROM app WHERE pid = ".$random[$i]['pid']);
+		$data = $result2->fetch_assoc();
+		$sql = "INSERT INTO app(id, pid, country, name, icon, url, price, currency, average, times) VALUES (NULL, ".$data['pid'].", 'C".$newId['id']."', '".$data['name']."', '".$data['icon']."', '".$data['url']."', 0, 'CUS', 0, 0)";
+		if (! $db->query($sql) )
+			echo "Errormessage: ".$db->error."\n";
+		$result2->close();
+	}
 }
