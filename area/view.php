@@ -28,7 +28,7 @@ require_once('../inc.php');
       <div class="row row-offcanvas row-offcanvas-right">
 
         <div class="col-xs-12 col-sm-12">
-          <h3>Customized Area Overview <a class="btn btn-xs btn-primary" href="edit-wkt.html">Create</a> <a class="btn btn-xs btn-info" href="../index.html">Back</a></h3>
+          <h3>Customized Area Overview <a class="btn btn-xs btn-primary" href="edit-wkt.html">Create</a> <a class="btn btn-xs btn-info" href="../index.php">Back</a></h3>
           <div id="canvas" style="width:100%;height:450px;"></div>
           <textarea style="display:none;" id="wkt"><?php echo getAllCustomAreaWKT(); ?></textarea>
         </div><!--/.col-xs-12.col-sm-9-->

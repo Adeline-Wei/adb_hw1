@@ -215,7 +215,7 @@ var app = (function () {
                 success: function(ret2){
                     console.log(ret2);
                     $("#myModal .modalBadge").html(currentCurrency+": "+currentPrice+" Avg: "+ret2);
-                    $("a.modalButton").attr('data-star', ret2);
+                    $("a[data-src="+currentPID+"]").attr('data-star', ret2);
                   }
                 });
               });
